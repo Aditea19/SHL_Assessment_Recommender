@@ -26,12 +26,15 @@ if st.button("Get Recommendations"):
 
             st.subheader("Top matching assessments")
 
-            if not results:
-                st.info("No matching assessments found.")
-            else:
-                for r in results:
+            shown = False
+            for r in results:
+                if r["score"] > 0:
+                    shown = True
                     st.markdown(
                         f"**{r['name']}**  \n"
                         f"Score: {r['score']}  \n"
                         f"[View assessment]({r['url']})"
                     )
+
+            if not shown:
+                st.info("No strong matches found. Try a more specific query.")
