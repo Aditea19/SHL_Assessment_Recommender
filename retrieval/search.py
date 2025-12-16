@@ -1,35 +1,24 @@
 import pickle
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Load embeddings and data
+# Load data
 with open("data/embeddings.pkl", "rb") as f:
     saved_data = pickle.load(f)
 
-embeddings = saved_data["embeddings"]
 data = saved_data["data"]
 
-# Load the same model used for embeddings
-model = None
+# Build corpus from assessment names
+corpus = data["name"].tolist()
 
-def get_model():
-    global model
-    if model is None:
-        from sentence_transformers import SentenceTransformer
-        model = SentenceTransformer("all-MiniLM-L6-v2")
-    return model
-
+vectorizer = TfidfVectorizer(stop_words="english")
+tfidf_matrix = vectorizer.fit_transform(corpus)
 
 def search_assessments(query, top_k=5):
-    # Convert query to embedding
-    model = get_model()
-    query_embedding = model.encode([query])
+    query_vec = vectorizer.transform([query])
+    similarities = cosine_similarity(query_vec, tfidf_matrix)[0]
 
-
-    # Compute cosine similarity
-    similarities = cosine_similarity(query_embedding, embeddings)[0]
-
-    # Get top-k indices
     top_indices = np.argsort(similarities)[::-1][:top_k]
 
     results = []
@@ -41,6 +30,7 @@ def search_assessments(query, top_k=5):
         })
 
     return results
+
 
 
 if __name__ == "__main__":
