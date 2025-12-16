@@ -1,6 +1,5 @@
 import pickle
 import numpy as np
-from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load embeddings and data
@@ -11,11 +10,21 @@ embeddings = saved_data["embeddings"]
 data = saved_data["data"]
 
 # Load the same model used for embeddings
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = None
+
+def get_model():
+    global model
+    if model is None:
+        from sentence_transformers import SentenceTransformer
+        model = SentenceTransformer("all-MiniLM-L6-v2")
+    return model
+
 
 def search_assessments(query, top_k=5):
     # Convert query to embedding
+    model = get_model()
     query_embedding = model.encode([query])
+
 
     # Compute cosine similarity
     similarities = cosine_similarity(query_embedding, embeddings)[0]
