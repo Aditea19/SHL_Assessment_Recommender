@@ -1,0 +1,8 @@
+Evaluation Results (Gen_AI Dataset)
+
+Metric: Recall@5
+Value: 0.42
+
+Model: TF-IDF based retrieval
+Top-K: 5
+Dataset size: XXX queries

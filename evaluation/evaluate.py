@@ -1,10 +1,11 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import pandas as pd
 from retrieval.search import search_assessments
 
-DATASET_PATH = "data/Gen_AI Dataset.xlsx"  # adjust if needed
+DATASET_PATH = "data/Gen_AI Dataset.xlsx"
 
 def evaluate(top_k_values=[1, 3, 5]):
     df = pd.read_excel(DATASET_PATH)
@@ -26,8 +27,8 @@ def evaluate(top_k_values=[1, 3, 5]):
     print("Evaluation Results")
     print("------------------")
     for k in top_k_values:
-        accuracy = hits[k] / total
-        print(f"Top-{k} Accuracy: {accuracy:.2f}")
+        accuracy = hits[k] / total if total > 0 else 0
+        print(f"Recall@{k}: {accuracy:.2f}")
 
 if __name__ == "__main__":
     evaluate()
